@@ -1,19 +1,14 @@
-<script setup>
-const { coupon } = defineProps({
-  coupon: {
-    type: Object,
-    required: false,
-    default: () => ({
-      storeName: "Café Delicioso",
-      availableCoupons: 15,
-      shortPremio: "Gaseosa gratuita",
-      storeImage:
-        "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-      description:
-        "Disfruta de un 25% de descuento en todos nuestros productos de café gourmet. Válido de lunes a viernes.",
-    }),
-  },
-});
+<script setup lang="ts">
+interface couponType {
+  storeName: string;
+  availableCoupons: number;
+  shortPremio: string;
+  storeImage: string;
+  description: string;
+}
+const { coupon } = defineProps<{
+  coupon: couponType;
+}>();
 </script>
 
 <template>
