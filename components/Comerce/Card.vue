@@ -2,10 +2,15 @@
 import { Phone, Instagram, MapPin } from "lucide-vue-next";
 import type { Comercio } from "~/lib/interfaces/comercio";
 
+const supabase = useSupabaseClient();
 const { comercio } = defineProps<{
   comercio: Comercio;
 }>();
 
+const {
+  data: { publicUrl: image },
+} = supabase.storage.from("comercios").getPublicUrl(comercio.image);
+console.log("Image URL:", image);
 const formatearWhatsApp = (numero: string) => {
   return numero ? `https://wa.me/${numero.replace(/[^0-9]/g, "")}` : "";
 };
@@ -15,34 +20,18 @@ const formatearInstagram = (usuario: string) => {
 };
 </script>
 <template>
-  <div
-    class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-  >
+  <div class="rounded-lg overflow-hidden">
     <!-- Imagen -->
-    <div class="relative bg-gray-200">
-      <img
-        :src="comercio.image"
-        :alt="comercio.name"
-        class="w-full h-full object-cover"
-      />
-      <div class="absolute top-2 right-2 flex gap-2">
-        <!-- <button
-                class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-                @click="editarComercio(comercio)"
-              >
-                <Edit class="w-4 h-4 text-gray-600" />
-              </button>
-              <button
-                class="p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-                @click="eliminarComercio(comercio.id)"
-              >
-                <Trash2 class="w-4 h-4 text-red-600" />
-              </button>-->
+    <div class="w-full flex justify-center">
+      <div class="shadow rounded-t-2xl overflow-hidden inline-block m-auto">
+        <img :src="image" :alt="comercio.name" class="h-80 object-cover" />
       </div>
     </div>
 
     <!-- Contenido -->
-    <div class="p-6">
+    <div
+      class="p-6 bg-white hover:shadow-md transition-shadow shadow h-full rounded-b"
+    >
       <h3 class="text-xl font-semibold text-gray-900 mb-2">
         {{ comercio.name }}
       </h3>

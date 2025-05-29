@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <nav class="flex justify-between p-4 shadow-lg items-center">
+  <nav class="flex justify-between p-4 shadow-lg items-center relative z-10">
     <div>
       <img src="../assets/img/logo.png" class="h-10" />
     </div>
@@ -17,6 +17,7 @@
         <IconsBlocks />
         <span>Directorio</span>
       </NavigationBarLink>
+      <AuthLogout />
     </div>
   </nav>
 </template>

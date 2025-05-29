@@ -1,16 +1,19 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { MapPin, Plus, X, Save } from "lucide-vue-next";
+import { MapPin, Plus } from "lucide-vue-next";
+import { ComerceForm } from "#components";
 
 // Estado reactivo
 const comercios = ref([]);
-const editingComercio = ref(null);
 const loading = ref(false);
+const { show: showForm } = useFormComerce();
 const supabase = useSupabaseClient();
+const user = useSupabaseUser();
 
-// Formulario
+const abrirFormulario = () => {
+  showForm.value = true;
+};
 
-// Funciones
 const cargarComercios = async () => {
   loading.value = true;
   try {
@@ -21,51 +24,6 @@ const cargarComercios = async () => {
     comercios.value = projects || [];
   } catch (error) {
     console.error("Error al cargar comercios:", error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const resetForm = () => {
-  form.value = {
-    name: "",
-    image: "",
-    ubicacion: "",
-    description: "",
-    whatsapp: "",
-    instagram: "",
-  };
-  editingComercio.value = null;
-};
-
-const guardarComercio = async () => {
-  loading.value = true;
-  try {
-    // Simula llamada a Supabase
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    if (editingComercio.value) {
-      // Actualizar comercio existente
-      const index = comercios.value.findIndex(
-        (c) => c.id === editingComercio.value
-      );
-      if (index !== -1) {
-        comercios.value[index] = { ...form.value, id: editingComercio.value };
-      }
-    } else {
-      // Crear nuevo comercio
-      const nuevoComercio = {
-        ...form.value,
-        id: Date.now(),
-        created_at: new Date().toISOString(),
-      };
-      comercios.value.unshift(nuevoComercio);
-    }
-
-    showForm.value = false;
-    resetForm();
-  } catch (error) {
-    console.error("Error al guardar comercio:", error);
   } finally {
     loading.value = false;
   }
@@ -94,13 +52,14 @@ useHead({ title: "La7 >> Directorio" });
               Descubre los mejores comercios de la ciudad
             </p>
           </div>
-          <!-- <button
+          <button
+            v-if="user"
             class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             @click="abrirFormulario"
           >
             <Plus class="w-5 h-5 mr-2" />
             Agregar Comercio
-          </button> -->
+          </button>
         </div>
       </div>
 
@@ -133,6 +92,7 @@ useHead({ title: "La7 >> Directorio" });
           Comienza agregando el primer comercio al directorio
         </p>
         <button
+          v-if="user"
           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           @click="abrirFormulario"
         >
@@ -143,7 +103,7 @@ useHead({ title: "La7 >> Directorio" });
     </div>
 
     <!-- Modal del formulario -->
-    <ComerceForm />
+    <ComerceForm v-if="user" @add-comercio="cargarComercios" />
   </div>
 </template>
 

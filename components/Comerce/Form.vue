@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { X, Save } from "lucide-vue-next";
+
 const form = ref({
   name: "",
   image: "",
@@ -7,25 +9,98 @@ const form = ref({
   whatsapp: "",
   instagram: "",
 });
-const showForm = ref(false);
+const { show: showForm } = useFormComerce();
+const supabase = useSupabaseClient();
 // Evento para abrir el formulario nuxt
-const emit = defineEmits(['toggle-form']);
+const emit = defineEmits([
+  "abrir-form",
+  "cerrar-form",
+  "add-comercio",
+  "update-comercio",
+]);
+const editingComercio = ref(null);
+const loading = ref(false);
+const imageInput = ref<HTMLInputElement | null>(null);
 
 // Evento para emitir al padre que debe cambiar el valor de showForm
-const abrirFormulario = () => {
-  resetForm();
-  showForm.value = true;
+
+const guardarComercio = async () => {
+  loading.value = true;
+  try {
+    if (editingComercio.value) {
+      // Actualizar comercio existente supabase
+    } else {
+      // Crear nuevo comercio
+      const nuevoComercio = {
+        ...form.value,
+        slug: "",
+      };
+      nuevoComercio.slug = nuevoComercio.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      if (
+        imageInput.value &&
+        imageInput.value.files &&
+        imageInput.value.files.length > 0
+      ) {
+        const file = imageInput.value.files[0];
+        const fileExtension = file.name.split(".").pop()?.toLowerCase();
+        const { data, error: uploadError } = await supabase.storage
+          .from("comercios")
+          .upload(
+            `comercios/${nuevoComercio.slug + "" + fileExtension}`,
+            file,
+            {
+              cacheControl: "3600",
+            }
+          );
+        if (uploadError) {
+          console.error("Error al subir la imagen:", uploadError);
+          return;
+        }
+        nuevoComercio.image = data.path; // Guardar la ruta de la imagen
+      }
+      const { error } = await supabase
+        .from("comercios")
+        .insert(nuevoComercio as never)
+        .select();
+      if (error) console.log(error);
+      emit("add-comercio", nuevoComercio);
+    }
+
+    showForm.value = false;
+    resetForm();
+  } catch (error) {
+    console.error("Error al guardar comercio:", error);
+  } finally {
+    loading.value = false;
+  }
 };
 
-const closeForm = () => {
-  emit('toggle-form', false);
-}
+const resetForm = () => {
+  form.value = {
+    name: "",
+    image: "",
+    ubicacion: "",
+    description: "",
+    whatsapp: "",
+    instagram: "",
+  };
+  editingComercio.value = null;
+};
+
+const cerrarFormulario = () => {
+  emit("cerrar-form", false);
+  showForm.value = false;
+};
 </script>
 <template>
   <div
     v-if="showForm"
     class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-    @click.self="showForm = false"
+    @click.self="cerrarFormulario"
   >
     <div
       class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
@@ -36,7 +111,7 @@ const closeForm = () => {
         </h2>
         <button
           class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          @click="showForm = false"
+          @click="cerrarFormulario"
         >
           <X class="w-5 h-5" />
         </button>
@@ -53,21 +128,16 @@ const closeForm = () => {
             type="text"
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="Ej: Café Central"
           />
-        </div>
-
-        <!-- Imagen -->
-        <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
             URL de la Imagen *
           </label>
           <input
-            v-model="form.image"
-            type="url"
+            ref="imageInput"
+            type="file"
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder="https://ejemplo.com/imagen.jpg"
+            placeholder="/imagen.jpg"
           />
         </div>
 
