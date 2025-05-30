@@ -23,14 +23,14 @@ const formatearInstagram = (usuario: string) => {
   <div class="rounded-lg overflow-hidden">
     <!-- Imagen -->
     <div class="w-full flex justify-center">
-      <div class="shadow rounded-t-2xl overflow-hidden inline-block m-auto">
+      <div class="rounded-t-2xl overflow-hidden inline-block m-auto">
         <img :src="image" :alt="comercio.name" class="h-80 object-cover" />
       </div>
     </div>
 
     <!-- Contenido -->
     <div
-      class="p-6 bg-white hover:shadow-md transition-shadow shadow h-full rounded-b"
+      class="p-6 bg-white hover:shadow-xl transition-shadow shadow-md h-full rounded-b"
     >
       <h3 class="text-xl font-semibold text-gray-900 mb-2">
         {{ comercio.name }}

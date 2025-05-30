@@ -1,0 +1,48 @@
+<template>
+  <svg viewBox="0 0 24 24" fill="currentColor" :class="$attrs.class">
+    <rect
+      x="2"
+      y="3"
+      width="20"
+      height="14"
+      rx="2"
+      ry="2"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    />
+    <line
+      x1="8"
+      y1="21"
+      x2="16"
+      y2="21"
+      stroke="currentColor"
+      stroke-width="2"
+    />
+    <line
+      x1="12"
+      y1="17"
+      x2="12"
+      y2="21"
+      stroke="currentColor"
+      stroke-width="2"
+    />
+    <circle cx="7" cy="8" r="1" fill="currentColor" />
+    <line
+      x1="10"
+      y1="8"
+      x2="18"
+      y2="8"
+      stroke="currentColor"
+      stroke-width="1"
+    />
+    <line
+      x1="10"
+      y1="12"
+      x2="16"
+      y2="12"
+      stroke="currentColor"
+      stroke-width="1"
+    />
+  </svg>
+</template>
