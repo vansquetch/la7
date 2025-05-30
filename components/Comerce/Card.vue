@@ -10,7 +10,6 @@ const { comercio } = defineProps<{
 const {
   data: { publicUrl: image },
 } = supabase.storage.from("comercios").getPublicUrl(comercio.image);
-console.log("Image URL:", image);
 const formatearWhatsApp = (numero: string) => {
   return numero ? `https://wa.me/${numero.replace(/[^0-9]/g, "")}` : "";
 };

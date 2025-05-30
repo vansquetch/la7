@@ -6,4 +6,6 @@ export interface Comercio {
   image: string;
   whatsapp?: string;
   instagram?: string;
+  slug?: string;
+  categorias?: string[];
 }

@@ -9,9 +9,10 @@ const form = ref({
   whatsapp: "",
   instagram: "",
 });
+
+const categorias = ref<string[]>([]);
 const { show: showForm } = useFormComerce();
-const supabase = useSupabaseClient();
-// Evento para abrir el formulario nuxt
+
 const emit = defineEmits([
   "abrir-form",
   "cerrar-form",
@@ -22,6 +23,8 @@ const editingComercio = ref(null);
 const loading = ref(false);
 const imageInput = ref<HTMLInputElement | null>(null);
 
+const { uploadComercePhoto, saveComerce, loadFormComerce } = useComercios();
+
 // Evento para emitir al padre que debe cambiar el valor de showForm
 
 const guardarComercio = async () => {
@@ -31,42 +34,10 @@ const guardarComercio = async () => {
       // Actualizar comercio existente supabase
     } else {
       // Crear nuevo comercio
-      const nuevoComercio = {
-        ...form.value,
-        slug: "",
-      };
-      nuevoComercio.slug = nuevoComercio.name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
-
-      if (
-        imageInput.value &&
-        imageInput.value.files &&
-        imageInput.value.files.length > 0
-      ) {
-        const file = imageInput.value.files[0];
-        const fileExtension = file.name.split(".").pop()?.toLowerCase();
-        const { data, error: uploadError } = await supabase.storage
-          .from("comercios")
-          .upload(
-            `comercios/${nuevoComercio.slug + "" + fileExtension}`,
-            file,
-            {
-              cacheControl: "3600",
-            }
-          );
-        if (uploadError) {
-          console.error("Error al subir la imagen:", uploadError);
-          return;
-        }
-        nuevoComercio.image = data.path; // Guardar la ruta de la imagen
-      }
-      const { error } = await supabase
-        .from("comercios")
-        .insert(nuevoComercio as never)
-        .select();
-      if (error) console.log(error);
+      const nuevoComercio = loadFormComerce(form.value);
+      nuevoComercio.image =
+        (await uploadComercePhoto(imageInput.value, nuevoComercio.slug)) ?? "";
+      await saveComerce(nuevoComercio);
       emit("add-comercio", nuevoComercio);
     }
 
@@ -139,6 +110,12 @@ const cerrarFormulario = () => {
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="/imagen.jpg"
           />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2"
+            >Categorías</label
+          >
+          <ComerceCategoriaSelector v-model="categorias" />
         </div>
 
         <!-- Ubicación -->

@@ -1,10 +1,14 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { MapPin, Plus } from "lucide-vue-next";
-import { ComerceForm } from "#components";
+import { ComerceCategoriaSelector, ComerceForm } from "#components";
+import Popover from "~/components/ui/popover/Popover.vue";
+import PopoverTrigger from "~/components/ui/popover/PopoverTrigger.vue";
+import PopoverContent from "~/components/ui/popover/PopoverContent.vue";
 
 // Estado reactivo
 const comercios = ref([]);
+const categoriasFilter = ref([]);
 const loading = ref(false);
 const { show: showForm } = useFormComerce();
 const supabase = useSupabaseClient();
@@ -14,13 +18,25 @@ const abrirFormulario = () => {
   showForm.value = true;
 };
 
+watch(
+  categoriasFilter,
+  () => {
+    cargarComercios();
+  },
+  { deep: true }
+);
+
 const cargarComercios = async () => {
   loading.value = true;
   try {
-    const { data: projects } = await supabase
+    const query = supabase
       .from("comercios")
       .select("*")
       .order("created_at", { ascending: false });
+    if (categoriasFilter.value.length > 0)
+      query.overlaps("categorias", categoriasFilter.value);
+
+    const { data: projects } = await query;
     comercios.value = projects || [];
   } catch (error) {
     console.error("Error al cargar comercios:", error);
@@ -39,24 +55,62 @@ useHead({ title: "La7 >> Directorio" });
 <template>
   <ContainerApp>
     <!-- Header -->
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <div
-        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+    <div class="flex justify-end">
+      <button
+        v-if="user"
+        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        @click="abrirFormulario"
       >
+        <Plus class="w-5 h-5 mr-2" />
+        Agregar Comercio
+      </button>
+    </div>
+    <div class="p-4 mb-2">
+      <div class="flex flex-row justify-between items-center gap-4">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900">Directorio Comercial</h1>
+          <h1 class="text-xl md:text-4xl font-bold text-gray-900 mb-1">
+            Directorio
+            <span
+              class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"
+            >
+              Comercial
+            </span>
+          </h1>
           <p class="text-gray-600 mt-1">
-            Descubre los mejores comercios de la ciudad
+            Descubre los comercios de la comunidad
           </p>
         </div>
-        <button
-          v-if="user"
-          class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          @click="abrirFormulario"
-        >
-          <Plus class="w-5 h-5 mr-2" />
-          Agregar Comercio
-        </button>
+        <div class="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger>
+              <button
+                class="relative inline-flex items-center justify-center cursor-pointer bg-gray-200 rounded-full hover:bg-gray-300 transition-colors w-10 h-10"
+              >
+                <div
+                  v-if="categoriasFilter.length > 0"
+                  class="rounded-full bg-gray-800 text-white text-sm flex items-center justify-center w-4 h-4 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2"
+                >
+                  {{ categoriasFilter.length }}
+                </div>
+
+                <IconsFilter />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <h3 class="font-bold text-lg">Filtro</h3>
+              <p class="text-gray-800 pb-2 text-sm">
+                Filtra por tipo de comercio
+              </p>
+              <ComerceCategoriaSelector v-model="categoriasFilter" />
+              <button
+                v-if="categoriasFilter.length > 0"
+                class="underline text-sm text-orange-600 hover:text-orange-700"
+              >
+                limpiar filtro
+              </button>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
     </div>
 
