@@ -27,7 +27,7 @@ const { contains } = useFilter({ sensitivity: "base" });
 const { fetchCategorias } = useComercios();
 const filteredCategorias = computed(() => {
   const options = categorias.value.filter(
-    (i) => !modelValue.value?.includes(i.label)
+    (i) => !modelValue.value?.includes(i.value)
   );
   return searchTerm.value
     ? options.filter((option) => contains(option.label, searchTerm.value))
@@ -35,7 +35,6 @@ const filteredCategorias = computed(() => {
 });
 
 const manageSelect = (ev: CustomEvent) => {
-  console.log(typeof ev.detail.value);
   if (typeof ev.detail.value === "string") {
     searchTerm.value = "";
     modelValue.value?.push(ev.detail.value);
@@ -72,15 +71,14 @@ onMounted(async () => {
             placeholder="Categorías..."
             class="w-full p-0 border-none focus-visible:ring-0 h-auto"
             @keydown.enter.prevent
+            @click="open = true"
           />
         </ComboboxInput>
       </TagsInput>
 
-      <ComboboxList
-        class="w-[--reka-popper-anchor-width] max-h-52 overflow-y-auto"
-      >
+      <ComboboxList class="w-[--reka-popper-anchor-width]">
         <ComboboxEmpty />
-        <ComboboxGroup>
+        <ComboboxGroup class="max-h-52 overflow-y-auto">
           <ComboboxItem
             v-for="categoria in filteredCategorias"
             :key="categoria.value"

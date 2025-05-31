@@ -12,6 +12,9 @@
 
     <!-- CTA Section -->
     <CtaSection />
+
+    <!-- Footer -->
+    <AppFooter />
   </div>
 </template>
 

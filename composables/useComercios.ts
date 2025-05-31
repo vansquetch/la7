@@ -43,18 +43,56 @@ export function useComercios() {
     return nuevoComercio;
   };
 
+  const cachedCategorias = useState<{ label: string; value: string }[]>(
+    "categorias-cache",
+    () => []
+  );
+
   const fetchCategorias = async () => {
-    const { data, error } = await supabase
-      .from("categorias")
-      .select("nombre, label")
-      .overrideTypes<{ nombre: string; label: string }[]>();
-    if (error) console.error("Error al cargar categorías:", error);
-    const dataMap = data?.map((c) => ({
-      label: c.nombre,
-      value: c.label,
-    }));
-    console.log("Categorías cargadas:", dataMap);
-    return dataMap ?? [];
+    // Si ya existe el caché, lo retornamos
+    if (cachedCategorias.value.length > 0) {
+      return cachedCategorias.value;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("categorias")
+        .select("nombre, label")
+        .overrideTypes<{ nombre: string; label: string }[]>();
+      console.log("Cargando categorias...");
+      if (error) {
+        console.error("Error al cargar categorías:", error);
+        return [];
+      }
+
+      const dataMap = data?.map((c) => ({
+        label: c.nombre,
+        value: c.label,
+      }));
+
+      // Guardar en caché
+      cachedCategorias.value = dataMap ?? [];
+      return cachedCategorias.value;
+    } catch (error) {
+      console.error("Error al cargar categorías:", error);
+      return [];
+    }
+  };
+
+  const loadComercios = async (categorias = [], page = 1, limit = 6) => {
+    const { data, count, hasMore } = await $fetch("/api/comercios", {
+      query: {
+        categorias: categorias.join(","),
+        page,
+        limit,
+      },
+    });
+
+    return {
+      comercios: data || [],
+      total: count || 0,
+      hasMore,
+    };
   };
 
   return {
@@ -62,5 +100,6 @@ export function useComercios() {
     saveComerce,
     loadFormComerce,
     fetchCategorias,
+    loadComercios,
   };
 }
