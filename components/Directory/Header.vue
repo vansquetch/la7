@@ -16,6 +16,8 @@ const { user, categoriasFilter } = defineProps({
   },
 });
 
+const { show: showForm, resetForm } = useFormComerce();
+
 const emit = defineEmits(["add-comercio", "update:categoriasFilter"]);
 
 const updateFilter = (value) => {
@@ -26,8 +28,8 @@ const clearFilter = () => {
   emit("update:categoriasFilter", []);
 };
 
-const openForm = () => {
-  emit("add-comercio");
+const createComerce = () => {
+  showForm.value = true;
 };
 </script>
 
@@ -38,7 +40,7 @@ const openForm = () => {
       <button
         v-if="user"
         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        @click="openForm"
+        @click="createComerce"
       >
         <Plus class="w-5 h-5 mr-2" />
         Agregar Comercio

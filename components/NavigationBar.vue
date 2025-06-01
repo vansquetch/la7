@@ -2,7 +2,7 @@
 
 <template>
   <nav
-    class="flex justify-between p-2 sm:p-4 shadow-lg items-center relative z-10"
+    class="flex justify-between p-2 sm:p-4 shadow-lg items-center z-10 sticky top-0 bg-white"
   >
     <div>
       <img src="../assets/img/logo.png" class="h-8 sm:h-10" />

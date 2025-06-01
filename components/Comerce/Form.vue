@@ -1,17 +1,9 @@
 <script setup lang="ts">
 import { X, Save } from "lucide-vue-next";
 
-const form = ref({
-  name: "",
-  image: "",
-  ubicacion: "",
-  description: "",
-  whatsapp: "",
-  instagram: "",
-});
-
 const categorias = ref<string[]>([]);
-const { show: showForm } = useFormComerce();
+const comerceForm = useFormComerce();
+const { show: showForm, resetForm, form, editingComercio } = comerceForm;
 
 const emit = defineEmits([
   "abrir-form",
@@ -19,22 +11,30 @@ const emit = defineEmits([
   "add-comercio",
   "update-comercio",
 ]);
-const editingComercio = ref(null);
+
 const loading = ref(false);
 const imageInput = ref<HTMLInputElement | null>(null);
 
-const { uploadComercePhoto, saveComerce, loadFormComerce } = useComercios();
+const { uploadComercePhoto, saveComerce, loadFormComerce, updateComerce } =
+  useComercios();
 
 // Evento para emitir al padre que debe cambiar el valor de showForm
 
 const guardarComercio = async () => {
   loading.value = true;
+  const nuevoComercio = loadFormComerce(form.value);
   try {
     if (editingComercio.value) {
       // Actualizar comercio existente supabase
+      if (imageInput.value?.files?.length) {
+        nuevoComercio.image =
+          (await uploadComercePhoto(imageInput.value, form.value.slug ?? "")) ??
+          "";
+      }
+      console.log("id comercio:", editingComercio.value);
+      await updateComerce(nuevoComercio, editingComercio.value);
+      emit("update-comercio", nuevoComercio);
     } else {
-      // Crear nuevo comercio
-      const nuevoComercio = loadFormComerce(form.value);
       nuevoComercio.image =
         (await uploadComercePhoto(imageInput.value, nuevoComercio.slug)) ?? "";
       await saveComerce(nuevoComercio);
@@ -48,18 +48,6 @@ const guardarComercio = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const resetForm = () => {
-  form.value = {
-    name: "",
-    image: "",
-    ubicacion: "",
-    description: "",
-    whatsapp: "",
-    instagram: "",
-  };
-  editingComercio.value = null;
 };
 
 const cerrarFormulario = () => {
@@ -100,13 +88,15 @@ const cerrarFormulario = () => {
             required
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
+        </div>
+        <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
             URL de la Imagen *
           </label>
           <input
             ref="imageInput"
             type="file"
-            required
+            :required="!editingComercio"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="/imagen.jpg"
           />
@@ -131,6 +121,7 @@ const cerrarFormulario = () => {
             placeholder="Ej: Centro Histórico, Calle Principal 123"
           />
         </div>
+        <LocationPicker v-model="form.location" required />
 
         <!-- Descripción -->
         <div>

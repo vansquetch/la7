@@ -31,7 +31,7 @@ const {
   loadMore,
   reset,
 } = useInfiniteScroll(loadComerciosAdapter, {
-  pageSize: 3,
+  pageSize: 6,
   debounceTime: 1200,
 });
 
@@ -90,10 +90,15 @@ useHead({ title: "La7 >> Directorio" });
       :categorias-filter="categoriasFilter"
       @load-more="handleLoadMore"
       @add-comercio="handleAddComercio"
+      @delete-comercio="recargarComercios"
     />
 
     <!-- Modal del formulario -->
-    <ComerceForm v-if="user" @add-comercio="recargarComercios" />
+    <ComerceForm
+      v-if="user"
+      @add-comercio="recargarComercios"
+      @update-comercio="recargarComercios"
+    />
   </ContainerApp>
 </template>
 

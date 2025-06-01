@@ -1,4 +1,4 @@
-import type { Comercio } from "~/lib/interfaces/comercio";
+import type { Comercio, ComercioEdit } from "~/lib/interfaces/comercio";
 
 export function useComercios() {
   const supabase = useSupabaseClient();
@@ -8,11 +8,11 @@ export function useComercios() {
   ) => {
     if (imageInput && imageInput.files && imageInput.files.length > 0) {
       const file = imageInput.files[0];
-      const fileExtension = file.name.split(".").pop()?.toLowerCase();
       const { data, error: uploadError } = await supabase.storage
         .from("comercios")
-        .upload(`comercios/${fileName + "" + fileExtension}`, file, {
+        .upload(`comercios/${fileName}`, file, {
           cacheControl: "3600",
+          upsert: true,
         });
       if (uploadError) {
         console.error("Error al subir la imagen:", uploadError);
@@ -23,7 +23,7 @@ export function useComercios() {
     return null;
   };
 
-  const saveComerce = async (comercio: Omit<Comercio, "id">) => {
+  const saveComerce = async (comercio: ComercioEdit) => {
     const { error } = await supabase
       .from("comercios")
       .insert(comercio as never)
@@ -31,7 +31,35 @@ export function useComercios() {
     if (error) console.log(error);
   };
 
-  const loadFormComerce = (formValue: Omit<Comercio, "id">) => {
+  const updateComerce = async (comercio: ComercioEdit, id: number) => {
+    const { error } = await supabase
+      .from("comercios")
+      .update(comercio as never)
+      .eq("id", id);
+    if (error) console.log(error);
+  };
+
+  const deleteComerce = async (comercio: Comercio) => {
+    const { error } = await supabase
+      .from("comercios")
+      .delete()
+      .eq("id", comercio.id);
+    if (error) console.log(error);
+    deleteComercePhoto(comercio.image);
+  };
+
+  const deleteComercePhoto = async (photoPath: string) => {
+    if (!photoPath) return;
+    const { error } = await supabase.storage
+      .from("comercios")
+      .remove([photoPath]);
+    if (error) {
+      console.error("Error al eliminar la foto del comercio:", error);
+      return false;
+    }
+  };
+
+  const loadFormComerce = (formValue: ComercioEdit) => {
     const nuevoComercio = {
       ...formValue,
       slug: "",
@@ -98,6 +126,8 @@ export function useComercios() {
   return {
     uploadComercePhoto,
     saveComerce,
+    updateComerce,
+    deleteComerce,
     loadFormComerce,
     fetchCategorias,
     loadComercios,

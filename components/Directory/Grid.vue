@@ -41,10 +41,19 @@ const {
   },
 });
 
-const emit = defineEmits(["load-more", "add-comercio"]);
+const emit = defineEmits([
+  "load-more",
+  "add-comercio",
+  "edit-comercio",
+  "delete-comercio",
+]);
 
 const loadMore = () => {
   emit("load-more");
+};
+
+const deleteComercio = () => {
+  emit("delete-comercio");
 };
 
 const openForm = () => {
@@ -73,6 +82,7 @@ const openForm = () => {
           v-for="comercio in comercios"
           :key="comercio.id"
           :comercio="comercio"
+          @delete-comercio="deleteComercio"
         />
       </div>
 

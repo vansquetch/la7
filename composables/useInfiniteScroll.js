@@ -13,7 +13,7 @@ export function useInfiniteScroll(loadFunction, options = {}) {
 
   // Estados reactivos
   const items = ref([]);
-  const loading = ref(false);
+  const loading = ref(true);
   const loadingMore = ref(false);
   const currentPage = ref(1);
   const hasMore = ref(true);

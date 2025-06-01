@@ -1,5 +1,6 @@
 // server/api/comercios.get.js
 import { serverSupabaseClient } from "#supabase/server";
+import type { Comercio } from "~/lib/interfaces/comercio";
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
@@ -21,9 +22,20 @@ export default defineEventHandler(async (event) => {
 
     const { data, error, count } = await queryBuilder
       .range(offset, offset + limit - 1)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .overrideTypes<Comercio[]>();
 
     if (error) throw error;
+
+    data.map((comercio) => {
+      if (comercio.location == null) {
+        comercio.location = {
+          lat: 0,
+          lng: 0,
+          address: "",
+        };
+      }
+    });
 
     return {
       data,
