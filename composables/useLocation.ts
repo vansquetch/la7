@@ -29,7 +29,6 @@ export const useLocation = () => {
 
   const setCurrentLocation = async (location: { lat: number; lng: number }) => {
     currentLocation.value = location;
-    activeLocation.value = true;
 
     const isTemp = !user.value;
     // Usa la locationKey del storage
@@ -48,6 +47,8 @@ export const useLocation = () => {
     if (error) {
       console.error("Error guardando ubicación:", error);
       alert("No se pudo guardar tu ubicación.");
+    } else {
+      activeLocation.value = true;
     }
   };
 
