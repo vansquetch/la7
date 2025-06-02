@@ -1,14 +1,11 @@
 <!-- components/CommerceGrid.vue -->
 <script setup>
-import { MapPin, Plus } from "lucide-vue-next";
-
 const {
   comercios,
   loading,
   loadingMore,
   hasMore,
   totalComercios,
-  user,
   categoriasFilter,
 } = defineProps({
   comercios: {
@@ -40,6 +37,8 @@ const {
     default: () => [],
   },
 });
+
+const auth = useAuth();
 
 const emit = defineEmits([
   "load-more",
@@ -137,7 +136,7 @@ const openForm = () => {
       class="text-center py-12"
     >
       <div class="text-gray-400 mb-4">
-        <MapPin class="w-16 h-16 mx-auto" />
+        <IconsMapPin class="w-16 h-16 mx-auto" />
       </div>
       <h3 class="text-lg font-medium text-gray-900 mb-2">
         No hay comercios registrados
@@ -146,11 +145,11 @@ const openForm = () => {
         Comienza agregando el primer comercio al directorio
       </p>
       <button
-        v-if="user"
+        v-if="auth.isAdmin"
         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         @click="openForm"
       >
-        <Plus class="w-5 h-5 mr-2" />
+        <IconsPlus class="w-5 h-5 mr-2" />
         Agregar Primer Comercio
       </button>
     </div>

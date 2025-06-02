@@ -1,7 +1,6 @@
 <!-- components/LocationPicker.vue -->
 <script setup lang="ts">
 import { ref, watch, onUnmounted, nextTick } from "vue";
-import { MapPin, X } from "lucide-vue-next";
 
 const props = defineProps<{
   modelValue: {
@@ -253,7 +252,7 @@ onUnmounted(() => {
       >
         <div class="flex items-start justify-between">
           <div class="flex items-start space-x-2">
-            <MapPin class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+            <IconsMapPin class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
             <div>
               <p class="text-sm font-medium text-green-800">
                 Ubicación seleccionada
@@ -272,7 +271,7 @@ onUnmounted(() => {
             class="text-green-600 hover:text-green-800"
             @click="clearLocation"
           >
-            <X class="w-4 h-4" />
+            <IconsX class="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -285,7 +284,7 @@ onUnmounted(() => {
           :disabled="isLoading"
           @click="getCurrentLocation"
         >
-          <MapPin class="w-4 h-4 mr-2" />
+          <IconsMapPin class="w-4 h-4 mr-2" />
           Mi ubicación
         </button>
 

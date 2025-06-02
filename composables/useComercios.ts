@@ -107,12 +107,37 @@ export function useComercios() {
     }
   };
 
-  const loadComercios = async (categorias = [], page = 1, limit = 6) => {
+  const likeComerce = async (
+    comercioId: number,
+    user: { id: number; email: "" }
+  ) => {
+    const { data, error } = await supabase
+      .from("comerce_likes")
+      .insert({ comercio_id: comercioId, user_id: user.id } as never)
+      .select();
+    console.log("Like data:", data);
+    if (error) {
+      console.error("Error al dar like al comercio:", error);
+      return false;
+    }
+  };
+
+  const loadComercios = async (
+    categorias = [],
+    page = 1,
+    limit = 6,
+    location_key: string | null = null,
+    location: { lat: number; lng: number } | null
+  ) => {
     const { data, count, hasMore } = await $fetch("/api/comercios", {
       query: {
         categorias: categorias.join(","),
         page,
         limit,
+        distancia: location_key ? "true" : "false",
+        distancia_key: location_key,
+        lat: location?.lat ?? 0,
+        lng: location?.lng ?? 0,
       },
     });
 
@@ -128,6 +153,7 @@ export function useComercios() {
     saveComerce,
     updateComerce,
     deleteComerce,
+    likeComerce,
     loadFormComerce,
     fetchCategorias,
     loadComercios,

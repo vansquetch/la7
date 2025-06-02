@@ -5,14 +5,20 @@ import { ComerceForm } from "#components";
 // Composables
 const { show: showForm } = useFormComerce();
 const { loadComercios } = useComercios();
-const user = useSupabaseUser();
-
+const { currentLocation, locationKey, activeLocation } = useLocation();
+const { user } = useAuth();
 // Estados locales
 const categoriasFilter = ref([]);
 
 // Función adaptador para el composable
 const loadComerciosAdapter = async (page, pageSize, categorias) => {
-  const result = await loadComercios(categorias, page, pageSize);
+  const result = await loadComercios(
+    categorias,
+    page,
+    pageSize,
+    activeLocation.value ? locationKey.value : null,
+    activeLocation.value ? currentLocation : null
+  );
   return {
     items: result.comercios,
     hasMore: result.hasMore,
@@ -57,6 +63,14 @@ watch(
   categoriasFilter,
   () => {
     reset(categoriasFilter.value);
+  },
+  { deep: true }
+);
+
+watch(
+  activeLocation,
+  () => {
+    recargarComercios();
   },
   { deep: true }
 );

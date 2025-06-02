@@ -1,14 +1,28 @@
 <script setup lang="ts">
-import { Phone, Instagram, MapPin } from "lucide-vue-next";
 import type { Comercio } from "~/lib/interfaces/comercio";
 
 const supabase = useSupabaseClient();
 const { deleteComerce } = useComercios();
+const { isAdmin, user } = useAuth();
+const { likeComerce } = useComercios();
 const { comercio } = defineProps<{
   comercio: Comercio;
 }>();
 
 const emits = defineEmits(["delete-comercio"]);
+
+const handleLikeComerce = async (id: number) => {
+  if (!user.value) {
+    const ok = confirm(
+      "Debes iniciar sesión para dar like a un comercio. ¿Deseas iniciar sesión ahora?"
+    );
+    if (ok) {
+      useRouter().push("/login");
+    }
+    return;
+  }
+  likeComerce(id, user.value.id);
+};
 
 const {
   data: { publicUrl: image },
@@ -44,12 +58,14 @@ const handleDeleteComerce = async (comercio: Comercio) => {
       <div class="rounded-t-2xl overflow-hidden inline-block m-auto relative">
         <div class="absolute top-0 right-0 flex space-x-2 p-2">
           <button
+            v-if="isAdmin()"
             class="cursor-pointer text-sm w-8 h-8 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors flex items-center justify-center"
             @click="handleDeleteComerce(comercio)"
           >
             <IconsDelete />
           </button>
           <button
+            v-if="isAdmin()"
             class="cursor-pointer text-sm w-8 h-8 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors flex items-center justify-center"
             @click="editComercio(comercio)"
           >
@@ -57,6 +73,7 @@ const handleDeleteComerce = async (comercio: Comercio) => {
           </button>
           <button
             class="cursor-pointer text-sm w-8 h-8 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors flex items-center justify-center"
+            @click="handleLikeComerce(comercio.id)"
           >
             <IconsLike />
           </button>
@@ -73,10 +90,13 @@ const handleDeleteComerce = async (comercio: Comercio) => {
       <div>
         <h3 class="text-xl font-semibold text-gray-900 mb-2">
           {{ comercio.name }}
+          <span v-if="comercio.distance" class="text-sm text-gray-600"
+            >{{ Math.round(comercio.distance * 100) }} mt</span
+          >
         </h3>
 
         <div class="flex items-start text-gray-600 mb-3">
-          <MapPin class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
+          <IconsMapPin class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
           <span class="text-sm">{{ comercio.ubicacion }}</span>
         </div>
 
@@ -97,7 +117,7 @@ const handleDeleteComerce = async (comercio: Comercio) => {
             target="_blank"
             class="inline-flex items-center px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm"
           >
-            <Phone class="w-4 h-4 mr-1" />
+            <IconsPhone class="w-4 h-4 mr-1" />
             WhatsApp
           </a>
           <a
@@ -106,7 +126,7 @@ const handleDeleteComerce = async (comercio: Comercio) => {
             target="_blank"
             class="inline-flex items-center px-3 py-2 bg-pink-100 text-pink-700 rounded-lg hover:bg-pink-200 transition-colors text-sm"
           >
-            <Instagram class="w-4 h-4 mr-1" />
+            <IconsInstagram class="w-4 h-4 mr-1" />
             Instagram
           </a>
         </div>

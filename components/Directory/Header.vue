@@ -1,20 +1,28 @@
 <script setup>
-import { Plus } from "lucide-vue-next";
 import { ComerceCategoriaSelector } from "#components";
 import Popover from "~/components/ui/popover/Popover.vue";
 import PopoverTrigger from "~/components/ui/popover/PopoverTrigger.vue";
 import PopoverContent from "~/components/ui/popover/PopoverContent.vue";
 
-const { user, categoriasFilter } = defineProps({
+const { categoriasFilter } = defineProps({
   user: {
     type: Object,
     default: null,
+  },
+  location: {
+    type: Object,
+    default: () => ({
+      lat: null,
+      lng: null,
+    }),
   },
   categoriasFilter: {
     type: Array,
     required: true,
   },
 });
+
+const auth = useAuth();
 
 const { show: showForm, resetForm } = useFormComerce();
 
@@ -29,6 +37,7 @@ const clearFilter = () => {
 };
 
 const createComerce = () => {
+  resetForm();
   showForm.value = true;
 };
 </script>
@@ -38,11 +47,11 @@ const createComerce = () => {
     <!-- Botón agregar comercio -->
     <div class="flex justify-end">
       <button
-        v-if="user"
+        v-if="auth.isAdmin()"
         class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         @click="createComerce"
       >
-        <Plus class="w-5 h-5 mr-2" />
+        <IconsPlus class="w-5 h-5 mr-2" />
         Agregar Comercio
       </button>
     </div>
@@ -59,13 +68,14 @@ const createComerce = () => {
               Comercial
             </span>
           </h1>
-          <p class="text-gray-600 mt-1">
+          <p class="text-gray-600 mt-1 size:sm md:text-base">
             Descubre los comercios de la comunidad
           </p>
         </div>
 
         <!-- Filtros -->
         <div class="flex items-center gap-2">
+          <DirectoryLocation />
           <client-only>
             <Popover>
               <PopoverTrigger>

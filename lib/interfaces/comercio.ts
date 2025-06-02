@@ -13,6 +13,7 @@ export interface Comercio {
     lng: number;
     address?: string;
   };
+  distance?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

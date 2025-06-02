@@ -20,6 +20,12 @@ export default defineNuxtConfig({
   },
   supabase: {
     redirect: false,
+    clientOptions: {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    },
   },
   modules: [
     "@nuxt/eslint",

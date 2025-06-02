@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { X, Save } from "lucide-vue-next";
-
 const categorias = ref<string[]>([]);
 const comerceForm = useFormComerce();
 const { show: showForm, resetForm, form, editingComercio } = comerceForm;
@@ -72,7 +70,7 @@ const cerrarFormulario = () => {
           class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           @click="cerrarFormulario"
         >
-          <X class="w-5 h-5" />
+          <IconsX class="w-5 h-5" />
         </button>
       </div>
 
@@ -176,7 +174,7 @@ const cerrarFormulario = () => {
             :disabled="loading"
             class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
           >
-            <Save class="w-4 h-4 mr-2" />
+            <IconsSave class="w-4 h-4 mr-2" />
             {{ loading ? "Guardando..." : "Guardar" }}
           </button>
         </div>
