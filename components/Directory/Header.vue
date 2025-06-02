@@ -68,8 +68,8 @@ const createComerce = () => {
               Comercial
             </span>
           </h1>
-          <p class="text-gray-600 mt-1 size:sm md:text-base">
-            Descubre los comercios de la comunidad
+          <p class="text-gray-600 mt-1 text-xs sm:text-sm md:text-base">
+            Descubre los comercios de la comunidad.
           </p>
         </div>
 
