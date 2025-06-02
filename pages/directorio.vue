@@ -69,8 +69,16 @@ watch(
 
 watch(
   activeLocation,
-  () => {
-    recargarComercios();
+  async (newValue, oldValue) => {
+    // Solo recargar si realmente cambió el estado
+    if (newValue !== oldValue) {
+      // Si se activó la ubicación, dar un pequeño delay para asegurar
+      // que la operación de guardado se completó
+      if (newValue) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      recargarComercios();
+    }
   },
   { deep: true }
 );

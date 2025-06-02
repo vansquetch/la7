@@ -47,7 +47,9 @@ export const useLocation = () => {
     if (error) {
       console.error("Error guardando ubicación:", error);
       alert("No se pudo guardar tu ubicación.");
+      throw error; // Lanzar el error para que el componente lo maneje
     } else {
+      // Solo activar después de que se guarde exitosamente
       activeLocation.value = true;
     }
   };
@@ -57,6 +59,6 @@ export const useLocation = () => {
     setCurrentLocation,
     currentLocation,
     disableLocation,
-    locationKey, // Lo puedes exponer si quieres mostrarlo o depurarlo
+    locationKey,
   };
 };

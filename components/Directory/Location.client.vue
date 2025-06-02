@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { getCurrentLocation } from "~/lib/utils";
-const { setCurrentLocation, activeLocation } = useLocation();
+const { setCurrentLocation, activeLocation, disableLocation } = useLocation();
 
 // Indicador de carga
 const isLoading = ref(false);
@@ -18,7 +18,7 @@ const handleLocation = async () => {
           "¿Actualizar la ubicación actual? Si cancela, se desactivará la ubicación."
         )
       ) {
-        activeLocation.value = false;
+        await disableLocation(); // Usar la función del composable
         return;
       }
     }
@@ -44,11 +44,12 @@ const handleLocation = async () => {
   isLoading.value = true;
   try {
     const position = await getCurrentLocation();
-    setCurrentLocation({
+    // Esperar a que se complete la operación de guardar
+    await setCurrentLocation({
       lat: position?.coords.latitude ?? 0,
       lng: position?.coords.longitude ?? 0,
     });
-    activeLocation.value = true;
+    // activeLocation se activará automáticamente en setCurrentLocation
   } catch (error) {
     console.error("Error al obtener la ubicación:", error);
     activeLocation.value = false;
