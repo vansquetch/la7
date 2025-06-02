@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import { getCurrentLocation } from "~/lib/utils";
 const { setCurrentLocation, activeLocation } = useLocation();
+const emit = defineEmits<{
+  (e: "updated-location", location: { lat: number; lng: number }): void;
+}>();
+
+// Indicador de carga
+const isLoading = ref(false);
+
 const handleLocation = async () => {
   const geoPermission = await navigator.permissions.query({
     name: "geolocation",
   });
+
   if (activeLocation.value) {
     if (geoPermission.state === "granted") {
       if (
@@ -24,15 +33,18 @@ const handleLocation = async () => {
     );
     return;
   }
+
   if (geoPermission.state === "prompt") {
     if (
       !confirm(
         "¿Deseas activar la ubicación actual? Esto permitirá mostrar los comercios cercanos."
       )
-    )
+    ) {
       return;
+    }
   }
 
+  isLoading.value = true;
   try {
     const position = await getCurrentLocation();
     setCurrentLocation({
@@ -40,21 +52,34 @@ const handleLocation = async () => {
       lng: position?.coords.longitude ?? 0,
     });
     activeLocation.value = true;
+    emit("updated-location", {
+      lat: position?.coords.latitude ?? 0,
+      lng: position?.coords.longitude ?? 0,
+    });
   } catch (error) {
     console.error("Error al obtener la ubicación:", error);
     activeLocation.value = false;
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
+
 <template>
   <button
     :class="{
       'bg-gray-200 text-gray-800 hover:bg-blue-300': !activeLocation,
       'bg-blue-700 text-white hover:bg-blue-500': activeLocation,
+      'opacity-50 cursor-not-allowed': isLoading,
     }"
     class="inline-flex items-center justify-center rounded-full transition-colors w-10 h-10"
+    :disabled="isLoading"
     @click="handleLocation"
   >
-    <IconsMapPin />
+    <div
+      v-if="isLoading"
+      class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"
+    ></div>
+    <IconsMapPin v-else />
   </button>
 </template>
