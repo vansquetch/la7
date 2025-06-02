@@ -2,9 +2,6 @@
 import { ref } from "vue";
 import { getCurrentLocation } from "~/lib/utils";
 const { setCurrentLocation, activeLocation } = useLocation();
-const emit = defineEmits<{
-  (e: "updated-location", location: { lat: number; lng: number }): void;
-}>();
 
 // Indicador de carga
 const isLoading = ref(false);
@@ -52,10 +49,6 @@ const handleLocation = async () => {
       lng: position?.coords.longitude ?? 0,
     });
     activeLocation.value = true;
-    emit("updated-location", {
-      lat: position?.coords.latitude ?? 0,
-      lng: position?.coords.longitude ?? 0,
-    });
   } catch (error) {
     console.error("Error al obtener la ubicación:", error);
     activeLocation.value = false;

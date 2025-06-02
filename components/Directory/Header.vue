@@ -26,7 +26,7 @@ const auth = useAuth();
 
 const { show: showForm, resetForm } = useFormComerce();
 
-const emit = defineEmits(["add-comercio", "update:categoriasFilter", 'updated-location']);
+const emit = defineEmits(["add-comercio", "update:categoriasFilter"]);
 
 const updateFilter = (value) => {
   emit("update:categoriasFilter", value);
@@ -75,7 +75,7 @@ const createComerce = () => {
 
         <!-- Filtros -->
         <div class="flex items-center gap-2">
-          <DirectoryLocation @updated-location="$emit('updated-location')" />
+          <DirectoryLocation />
           <client-only>
             <Popover>
               <PopoverTrigger>

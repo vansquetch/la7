@@ -91,7 +91,6 @@ useHead({ title: "La7 >> Directorio" });
       v-model:categorias-filter="categoriasFilter"
       :user="user"
       @add-comercio="handleAddComercio"
-      @updated-location="recargarComercios"
     />
 
     <!-- Grid de comercios -->
