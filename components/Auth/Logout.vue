@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { logout } = useAuth();
+useLocation().activeLocation.value = false;
+useLike().filterLike.value = false;
 </script>
 
 <template>

@@ -1,6 +1,11 @@
 export const useAuth = () => {
   const supabase = useSupabaseClient();
   const userS = useSupabaseUser();
+  const loginParams = ref({
+    email: "",
+    password: "",
+  });
+  const errorMessage = ref("");
   const { data, refresh, error, status } = useAsyncData(
     "authuser", // clave única para el caché
     async () => {
@@ -25,6 +30,31 @@ export const useAuth = () => {
     }
   );
 
+  const login = async () => {
+    const { error } = await supabase.auth.signInWithPassword(loginParams.value);
+    if (error) {
+      switch (error.message) {
+        case "Invalid login credentials":
+          errorMessage.value =
+            "Credenciales incorrectas. Verifica tu email y contraseña.";
+          break;
+        case "Email not confirmed":
+          errorMessage.value =
+            "Debes confirmar tu email antes de iniciar sesión.";
+          break;
+        case "Too many requests":
+          errorMessage.value =
+            "Demasiados intentos. Intenta nuevamente en unos minutos.";
+          break;
+        default:
+          errorMessage.value = "Error al iniciar sesión. Intenta nuevamente.";
+      }
+    } else {
+      await refresh();
+    }
+    return { error, message: errorMessage.value };
+  };
+
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.log(error);
@@ -43,5 +73,15 @@ export const useAuth = () => {
     return data.value?.user || null;
   });
 
-  return { user, status, refresh, error, isAdmin, logout };
+  return {
+    user,
+    status,
+    refresh,
+    error,
+    isAdmin,
+    logout,
+    login,
+    loginParams,
+    errorMessage,
+  };
 };
