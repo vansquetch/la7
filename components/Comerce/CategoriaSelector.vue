@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFilter } from "reka-ui";
-import { computed, ref } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 import {
   Combobox,
   ComboboxAnchor,
@@ -23,6 +23,8 @@ const modelValue = defineModel<string[]>();
 const open = ref(false);
 const searchTerm = ref("");
 
+const emit = defineEmits(["update:modelValue"]);
+
 const { contains } = useFilter({ sensitivity: "base" });
 const { fetchCategorias } = useComercios();
 const filteredCategorias = computed(() => {
@@ -44,6 +46,11 @@ const manageSelect = (ev: CustomEvent) => {
     open.value = false;
   }
 };
+
+// 🚀 Emite cambios hacia el padre cada vez que modelValue cambie
+watch(modelValue, (newVal) => {
+  emit("update:modelValue", newVal);
+});
 
 onMounted(async () => {
   categorias.value = await fetchCategorias();

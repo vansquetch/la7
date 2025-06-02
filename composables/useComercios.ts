@@ -106,18 +106,47 @@ export function useComercios() {
       return [];
     }
   };
+  // En tu composable useComercios, mejora estas funciones:
 
-  const likeComerce = async (
-    comercioId: number,
-    user: { id: number; email: "" }
-  ) => {
-    const { data, error } = await supabase
-      .from("comerce_likes")
-      .insert({ comercio_id: comercioId, user_id: user.id } as never)
-      .select();
-    console.log("Like data:", data);
-    if (error) {
-      console.error("Error al dar like al comercio:", error);
+  const likeComerce = async (comercioId: number, user_id: string) => {
+    try {
+      const { error } = await supabase
+        .from("comerce_likes")
+        .insert({ comercio_id: comercioId, user_id: user_id } as never)
+        .select();
+
+      if (error) {
+        // Si el error es por duplicado (usuario ya dio like), no es un error real
+        if (error.code === "23505") {
+          // Código de error para violación de unique constraint
+          console.log("El usuario ya había dado like a este comercio");
+          return true;
+        }
+        console.error("Error al dar like al comercio:", error);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error("Error inesperado al dar like:", error);
+      return false;
+    }
+  };
+
+  const unlikeComerce = async (comercioId: number, user_id: string) => {
+    try {
+      const { error } = await supabase
+        .from("comerce_likes")
+        .delete()
+        .eq("comercio_id", comercioId)
+        .eq("user_id", user_id);
+
+      if (error) {
+        console.error("Error al quitar like al comercio:", error);
+        return false;
+      }
+      return true; // Agregar return true para consistencia
+    } catch (error) {
+      console.error("Error inesperado al quitar like:", error);
       return false;
     }
   };
@@ -127,7 +156,9 @@ export function useComercios() {
     page = 1,
     limit = 6,
     location_key: string | null = null,
-    location: { lat: number; lng: number } | null
+    location: { lat: number; lng: number } | null,
+    filterLike: boolean = false,
+    allCoincidence: boolean = false
   ) => {
     const { data, count, hasMore } = await $fetch("/api/comercios", {
       query: {
@@ -138,7 +169,10 @@ export function useComercios() {
         distancia_key: location_key,
         lat: location?.lat ?? 0,
         lng: location?.lng ?? 0,
+        filterLike: filterLike ? "true" : "false",
+        allCoincidence: allCoincidence ? "true" : "false",
       },
+      headers: useRequestHeaders(["cookie"]),
     });
 
     return {
@@ -154,6 +188,7 @@ export function useComercios() {
     updateComerce,
     deleteComerce,
     likeComerce,
+    unlikeComerce,
     loadFormComerce,
     fetchCategorias,
     loadComercios,

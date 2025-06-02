@@ -3,26 +3,12 @@ import type { Comercio } from "~/lib/interfaces/comercio";
 
 const supabase = useSupabaseClient();
 const { deleteComerce } = useComercios();
-const { isAdmin, user } = useAuth();
-const { likeComerce } = useComercios();
+const { isAdmin } = useAuth();
 const { comercio } = defineProps<{
   comercio: Comercio;
 }>();
 
 const emits = defineEmits(["delete-comercio"]);
-
-const handleLikeComerce = async (id: number) => {
-  if (!user.value) {
-    const ok = confirm(
-      "Debes iniciar sesión para dar like a un comercio. ¿Deseas iniciar sesión ahora?"
-    );
-    if (ok) {
-      useRouter().push("/login");
-    }
-    return;
-  }
-  likeComerce(id, user.value.id);
-};
 
 const {
   data: { publicUrl: image },
@@ -71,12 +57,10 @@ const handleDeleteComerce = async (comercio: Comercio) => {
           >
             <IconsEdit />
           </button>
-          <button
-            class="cursor-pointer text-sm w-8 h-8 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors flex items-center justify-center"
-            @click="handleLikeComerce(comercio.id)"
-          >
-            <IconsLike />
-          </button>
+          <ComerceLike
+            :comercio-id="comercio.id"
+            :liked="comercio.liked ?? false"
+          />
         </div>
         <img :src="image" :alt="comercio.name" class="h-72 object-cover" />
       </div>

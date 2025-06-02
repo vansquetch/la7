@@ -64,7 +64,7 @@ const handleLocation = async () => {
     :class="{
       'bg-gray-200 text-gray-800 hover:bg-blue-300': !activeLocation,
       'bg-blue-700 text-white hover:bg-blue-500': activeLocation,
-      'opacity-50 cursor-not-allowed': isLoading,
+      'opacity-80': isLoading,
     }"
     class="inline-flex items-center justify-center rounded-full transition-colors w-10 h-10"
     :disabled="isLoading"

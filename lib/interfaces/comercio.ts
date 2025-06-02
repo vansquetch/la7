@@ -14,6 +14,8 @@ export interface Comercio {
     address?: string;
   };
   distance?: number;
+  liked?: boolean;
+  is_liked_by_user?: boolean; // Nuevo campo de la vista
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

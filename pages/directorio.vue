@@ -1,14 +1,15 @@
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { watch, onMounted } from "vue";
 import { ComerceForm } from "#components";
 
 // Composables
 const { show: showForm } = useFormComerce();
 const { loadComercios } = useComercios();
 const { currentLocation, locationKey, activeLocation } = useLocation();
+const { categoriasFilter, allCoincidence } = useCategoria();
+const { filterLike } = useLike();
 const { user } = useAuth();
 // Estados locales
-const categoriasFilter = ref([]);
 
 // Función adaptador para el composable
 const loadComerciosAdapter = async (page, pageSize, categorias) => {
@@ -17,7 +18,9 @@ const loadComerciosAdapter = async (page, pageSize, categorias) => {
     page,
     pageSize,
     activeLocation.value ? locationKey.value : null,
-    activeLocation.value ? currentLocation : null
+    activeLocation.value ? currentLocation : null,
+    filterLike.value,
+    allCoincidence.value
   );
   return {
     items: result.comercios,
@@ -59,13 +62,6 @@ const recargarComercios = () => {
 };
 
 // Watchers
-watch(
-  categoriasFilter,
-  () => {
-    reset(categoriasFilter.value);
-  },
-  { deep: true }
-);
 
 watch(
   activeLocation,
@@ -76,6 +72,37 @@ watch(
       // que la operación de guardado se completó
       if (newValue) {
         await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      recargarComercios();
+    }
+  },
+  { deep: true }
+);
+
+watch(
+  categoriasFilter,
+  () => {
+    console.log("Categorias filter changed:", categoriasFilter.value);
+    reset(categoriasFilter.value);
+  },
+  { deep: true }
+);
+
+watch(
+  allCoincidence,
+  () => {
+    if (categoriasFilter.value.length > 0) {
+      reset(categoriasFilter.value);
+    }
+  },
+  { deep: true }
+);
+watch(
+  filterLike,
+  async (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      if (newValue) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
       recargarComercios();
     }

@@ -1,40 +1,7 @@
 <script setup>
-import { ComerceCategoriaSelector } from "#components";
-import Popover from "~/components/ui/popover/Popover.vue";
-import PopoverTrigger from "~/components/ui/popover/PopoverTrigger.vue";
-import PopoverContent from "~/components/ui/popover/PopoverContent.vue";
-
-const { categoriasFilter } = defineProps({
-  user: {
-    type: Object,
-    default: null,
-  },
-  location: {
-    type: Object,
-    default: () => ({
-      lat: null,
-      lng: null,
-    }),
-  },
-  categoriasFilter: {
-    type: Array,
-    required: true,
-  },
-});
-
 const auth = useAuth();
 
 const { show: showForm, resetForm } = useFormComerce();
-
-const emit = defineEmits(["add-comercio", "update:categoriasFilter"]);
-
-const updateFilter = (value) => {
-  emit("update:categoriasFilter", value);
-};
-
-const clearFilter = () => {
-  emit("update:categoriasFilter", []);
-};
 
 const createComerce = () => {
   resetForm();
@@ -57,10 +24,10 @@ const createComerce = () => {
     </div>
 
     <!-- Header con título y filtros -->
-    <div class="p-4 mb-2">
+    <div class="px-0 py-4 sm:px-4 mb-2">
       <div class="flex flex-row justify-between items-center gap-4">
         <div>
-          <h1 class="text-xl md:text-4xl font-bold text-gray-900 mb-1">
+          <h1 class="text-lg md:text-3xl font-bold text-gray-900 mb-1">
             Directorio
             <span
               class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"
@@ -75,46 +42,9 @@ const createComerce = () => {
 
         <!-- Filtros -->
         <div class="flex items-center gap-2">
+          <DirectoryLiked />
           <DirectoryLocation />
-          <client-only>
-            <Popover>
-              <PopoverTrigger>
-                <button
-                  class="relative inline-flex items-center justify-center cursor-pointer bg-gray-200 rounded-full hover:bg-gray-300 transition-colors w-10 h-10"
-                >
-                  <div
-                    v-if="categoriasFilter.length > 0"
-                    class="rounded-full bg-gray-800 text-white text-sm flex items-center justify-center w-4 h-4 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2"
-                  >
-                    {{ categoriasFilter.length }}
-                  </div>
-                  <IconsFilter />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <h3 class="font-bold text-lg">Filtro</h3>
-                <p class="text-gray-800 pb-2 text-sm">
-                  Filtra por tipo de comercio
-                </p>
-                <ComerceCategoriaSelector
-                  :model-value="categoriasFilter"
-                  @update:model-value="updateFilter"
-                />
-                <button
-                  v-if="categoriasFilter.length > 0"
-                  class="underline text-sm text-orange-600 hover:text-orange-700"
-                  @click="clearFilter"
-                >
-                  limpiar filtro
-                </button>
-              </PopoverContent>
-            </Popover>
-            <template #fallback>
-              <div
-                class="bg-gray-200 rounded-full hover:bg-gray-300 w-10 h-10 animate-pulse"
-              ></div>
-            </template>
-          </client-only>
+          <DirectoryCategoria />
         </div>
       </div>
     </div>
