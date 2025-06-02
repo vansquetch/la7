@@ -171,6 +171,7 @@ export function useComercios() {
         lng: location?.lng ?? 0,
         filterLike: filterLike ? "true" : "false",
         allCoincidence: allCoincidence ? "true" : "false",
+        activeSesion: useSupabaseUser().value?.id ? "true" : "false",
       },
       headers: useRequestHeaders(["cookie"]),
     });

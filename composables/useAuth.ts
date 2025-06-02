@@ -31,6 +31,7 @@ export const useAuth = () => {
     else {
       // Limpiar el caché de datos del usuario
       data.value = { user: null };
+      useRouter().push("/"); // Recargar la ruta para reflejar el cambio
     }
   };
 

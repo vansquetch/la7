@@ -3,15 +3,16 @@ import type { Comercio } from "~/lib/interfaces/comercio";
 
 export default defineEventHandler(async (event) => {
   const supabase = await serverSupabaseClient(event);
-  const user = await serverSupabaseUser(event);
 
   const query = getQuery(event);
+  const activeSesion = query.activeSesion === "true";
   const page = parseInt(query.page as string) || 1;
   const queryLimit = parseInt(query.limit as string);
   const limit = (queryLimit || 12) > 12 ? 12 : queryLimit; // Mantienes el límite máximo de 12
   const offset = (page - 1) * limit;
   const distancia = query.distancia === "true";
   const allCoincidence = query.allCoincidence === "true";
+  const user = activeSesion ? await serverSupabaseUser(event) : null;
   const filterLike = query.filterLike === "true" && !!user; // filterLike solo aplica si hay usuario
   const distancia_key = query.distancia_key as string;
 

@@ -1,8 +1,7 @@
 <script setup>
 const auth = useAuth();
-
+const { user } = auth;
 const { show: showForm, resetForm } = useFormComerce();
-
 const createComerce = () => {
   resetForm();
   showForm.value = true;
@@ -42,7 +41,7 @@ const createComerce = () => {
 
         <!-- Filtros -->
         <div class="flex items-center gap-2">
-          <DirectoryLiked />
+          <DirectoryLiked v-if="user" />
           <DirectoryLocation />
           <DirectoryCategoria />
         </div>
