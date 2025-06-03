@@ -1,26 +1,50 @@
+import Compressor from "compressorjs";
 import type { Comercio, ComercioEdit } from "~/lib/interfaces/comercio";
 
 export function useComercios() {
   const supabase = useSupabaseClient();
-  const uploadComercePhoto = async (
+  const uploadComercePhoto = (
     imageInput: HTMLInputElement | null,
     fileName: string
-  ) => {
-    if (imageInput && imageInput.files && imageInput.files.length > 0) {
-      const file = imageInput.files[0];
-      const { data, error: uploadError } = await supabase.storage
-        .from("comercios")
-        .upload(`comercios/${fileName}`, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-      if (uploadError) {
-        console.error("Error al subir la imagen:", uploadError);
-        return null;
+  ): Promise<string | null> => {
+    return new Promise((resolve, reject) => {
+      if (!imageInput || !imageInput.files || imageInput.files.length === 0) {
+        resolve(null);
+        return;
       }
-      return data.path;
-    }
-    return null;
+
+      new Compressor(imageInput.files[0], {
+        maxHeight: 320,
+        maxWidth: 410,
+        quality: 0.6,
+        checkOrientation: false,
+        success: async (file) => {
+          try {
+            const { data, error: uploadError } = await supabase.storage
+              .from("comercios")
+              .upload(`comercios/${fileName}`, file, {
+                cacheControl: "3600",
+                upsert: true,
+              });
+
+            if (uploadError) {
+              console.error("Error al subir la imagen:", uploadError);
+              reject(uploadError);
+              return;
+            }
+
+            resolve(data.path);
+          } catch (error) {
+            console.error("Error en el proceso de subida:", error);
+            reject(error);
+          }
+        },
+        error: (error) => {
+          console.error("Error al comprimir la imagen:", error);
+          reject(error);
+        },
+      });
+    });
   };
 
   const saveComerce = async (comercio: ComercioEdit) => {

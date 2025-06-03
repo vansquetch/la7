@@ -75,7 +75,7 @@ const handleDeleteComerce = async (comercio: Comercio) => {
         <h3 class="text-xl font-semibold text-gray-900 mb-2">
           {{ comercio.name }}
           <span v-if="comercio.distance" class="text-sm text-gray-600 ml-2"
-            >a {{ Math.round(comercio.distance * 100) }} mt</span
+            >a {{ Math.round(comercio.distance * 1000) }} mt</span
           >
         </h3>
 

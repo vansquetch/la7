@@ -108,12 +108,18 @@ const openForm = () => {
       </div>
 
       <!-- Loading más comercios -->
-      <div v-if="loadingMore" class="text-center py-8">
-        <div class="bg-white rounded-lg shadow-md p-4 animate-pulse mb-4">
-          <div class="h-48 bg-gray-200 rounded-lg mb-4"></div>
-          <div class="h-4 bg-gray-200 rounded mb-2"></div>
-          <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-          <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+      <div v-if="loadingMore" class="text-center py-8 pt-0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div v-for="index in 3" :key="index">
+            <div v-if="hasMore && loadingMore" class="text-gray-400 text-sm">
+              <div class="bg-white rounded-lg shadow-md p-4 animate-pulse mb-4">
+                <div class="h-48 bg-gray-200 rounded-lg mb-4"></div>
+                <div class="h-4 bg-gray-200 rounded mb-2"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div
