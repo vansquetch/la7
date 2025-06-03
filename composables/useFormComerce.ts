@@ -15,6 +15,7 @@ export const useFormComerce = () => {
     whatsapp: "",
     instagram: "",
     categorias: [],
+    suscripcion_value: 10000,
     location: {
       lat: 0,
       lng: 0,

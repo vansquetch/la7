@@ -16,6 +16,7 @@ export interface Comercio {
   distance?: number;
   liked?: boolean;
   is_liked_by_user?: boolean; // Nuevo campo de la vista
+  suscripcion_value: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type

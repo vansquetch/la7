@@ -54,10 +54,12 @@ export default defineEventHandler(async (event) => {
       // Ordenamiento original si filterLike es false o no hay usuario
       if (distancia) {
         queryBuilder = queryBuilder.order("distance", { ascending: true });
-      } else {
-        queryBuilder = queryBuilder.order("created_at", { ascending: false });
       }
     }
+
+    queryBuilder
+      .order("suscripcion_value", { ascending: false })
+      .order("created_at", { ascending: true });
 
     // El filtro .eq("user_id", ...) para 'comercios_con_distancia' debe aplicarse si es necesario
     // Este filtro es para la lógica de 'comercios_con_distancia' en sí, no para los likes.
