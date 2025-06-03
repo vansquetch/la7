@@ -1,5 +1,6 @@
 <script setup lang="ts">
 useHead({ title: "La7 >> Iniciar Sesión" });
+definePageMeta({ middleware: ["unauthenticated"] });
 </script>
 
 <template>

@@ -16,7 +16,7 @@ const loginManage = async () => {
 
   try {
     const { error } = await login();
-    if (!error) navigateTo("/");
+    if (!error) navigateTo("/directorio");
   } catch (err) {
     errorMessage.value =
       "Error de conexión. Verifica tu internet e intenta nuevamente." +

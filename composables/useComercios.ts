@@ -32,9 +32,10 @@ export function useComercios() {
   };
 
   const updateComerce = async (comercio: ComercioEdit, id: number) => {
+    const { liked, distance, ...comercio_limpio } = comercio;
     const { error } = await supabase
       .from("comercios")
-      .update(comercio as never)
+      .update(comercio_limpio as never)
       .eq("id", id);
     if (error) console.log(error);
   };
@@ -71,41 +72,6 @@ export function useComercios() {
     return nuevoComercio;
   };
 
-  const cachedCategorias = useState<{ label: string; value: string }[]>(
-    "categorias-cache",
-    () => []
-  );
-
-  const fetchCategorias = async () => {
-    // Si ya existe el caché, lo retornamos
-    if (cachedCategorias.value.length > 0) {
-      return cachedCategorias.value;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from("categorias")
-        .select("nombre, label")
-        .overrideTypes<{ nombre: string; label: string }[]>();
-      console.log("Cargando categorias...");
-      if (error) {
-        console.error("Error al cargar categorías:", error);
-        return [];
-      }
-
-      const dataMap = data?.map((c) => ({
-        label: c.nombre,
-        value: c.label,
-      }));
-
-      // Guardar en caché
-      cachedCategorias.value = dataMap ?? [];
-      return cachedCategorias.value;
-    } catch (error) {
-      console.error("Error al cargar categorías:", error);
-      return [];
-    }
-  };
   // En tu composable useComercios, mejora estas funciones:
 
   const likeComerce = async (comercioId: number, user_id: string) => {
@@ -191,7 +157,6 @@ export function useComercios() {
     likeComerce,
     unlikeComerce,
     loadFormComerce,
-    fetchCategorias,
     loadComercios,
   };
 }

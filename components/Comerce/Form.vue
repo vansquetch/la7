@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const categorias = ref<string[]>([]);
 const comerceForm = useFormComerce();
 const { show: showForm, resetForm, form, editingComercio } = comerceForm;
 
@@ -22,19 +21,15 @@ const guardarComercio = async () => {
   loading.value = true;
   const nuevoComercio = loadFormComerce(form.value);
   try {
+    if (imageInput.value?.files?.length) {
+      nuevoComercio.image =
+        (await uploadComercePhoto(imageInput.value, form.value.slug ?? "")) ??
+        "";
+    }
     if (editingComercio.value) {
-      // Actualizar comercio existente supabase
-      if (imageInput.value?.files?.length) {
-        nuevoComercio.image =
-          (await uploadComercePhoto(imageInput.value, form.value.slug ?? "")) ??
-          "";
-      }
-      console.log("id comercio:", editingComercio.value);
       await updateComerce(nuevoComercio, editingComercio.value);
       emit("update-comercio", nuevoComercio);
     } else {
-      nuevoComercio.image =
-        (await uploadComercePhoto(imageInput.value, nuevoComercio.slug)) ?? "";
       await saveComerce(nuevoComercio);
       emit("add-comercio", nuevoComercio);
     }
@@ -103,7 +98,7 @@ const cerrarFormulario = () => {
           <label class="block text-sm font-medium text-gray-700 mb-2"
             >Categorías</label
           >
-          <ComerceCategoriaSelector v-model="categorias" />
+          <ComerceCategoriaSelector v-model="form.categorias" />
         </div>
 
         <!-- Ubicación -->

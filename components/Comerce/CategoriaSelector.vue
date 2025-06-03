@@ -19,14 +19,16 @@ import {
 } from "@/components/ui/tags-input";
 
 const categorias = ref<{ label: string; value: string }[]>([]);
-const modelValue = defineModel<string[]>();
+// ✅ Solución: Especificar valor por defecto como función para evitar referencias compartidas
+const modelValue = defineModel<string[]>({ default: () => [] });
 const open = ref(false);
 const searchTerm = ref("");
 
 const emit = defineEmits(["update:modelValue"]);
 
 const { contains } = useFilter({ sensitivity: "base" });
-const { fetchCategorias } = useComercios();
+const { fetchCategorias, createCategoria } = useCategoria();
+
 const filteredCategorias = computed(() => {
   const options = categorias.value.filter(
     (i) => !modelValue.value?.includes(i.value)
@@ -37,9 +39,11 @@ const filteredCategorias = computed(() => {
 });
 
 const manageSelect = (ev: CustomEvent) => {
+  console.log("manage select fired");
   if (typeof ev.detail.value === "string") {
     searchTerm.value = "";
-    modelValue.value?.push(ev.detail.value);
+    // ✅ Crear nuevo array en lugar de mutar el existente
+    modelValue.value = [...(modelValue.value || []), ev.detail.value];
   }
 
   if (filteredCategorias.value.length === 0) {
@@ -47,10 +51,25 @@ const manageSelect = (ev: CustomEvent) => {
   }
 };
 
+const manageSearchInput = (ev: KeyboardEvent) => {
+  if (filteredCategorias.value.length === 0) {
+    if (ev.key == "Enter") {
+      createCategoria(searchTerm.value);
+      // ✅ Crear nuevo array en lugar de mutar el existente
+      modelValue.value = [...(modelValue.value || []), searchTerm.value];
+      searchTerm.value = "";
+    }
+  }
+};
+
 // 🚀 Emite cambios hacia el padre cada vez que modelValue cambie
-watch(modelValue, (newVal) => {
-  emit("update:modelValue", newVal);
-});
+watch(
+  modelValue,
+  (newVal) => {
+    emit("update:modelValue", newVal);
+  },
+  { deep: true }
+); // ✅ Agregar deep: true para detectar cambios en arrays
 
 onMounted(async () => {
   categorias.value = await fetchCategorias();
@@ -77,7 +96,7 @@ onMounted(async () => {
           <TagsInputInput
             placeholder="Categorías..."
             class="w-full p-0 border-none focus-visible:ring-0 h-auto"
-            @keydown.enter.prevent
+            @keydown.enter.prevent="manageSearchInput"
             @click="open = true"
           />
         </ComboboxInput>

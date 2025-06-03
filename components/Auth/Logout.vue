@@ -6,10 +6,11 @@ useLike().filterLike.value = false;
 
 <template>
   <button
-    class="flex space-x-1 hover:text-orange-600 font-bold transition hover:scale-105 cursor-pointer"
+    class="flex items-center flex-col gap-1 space-x-1 hover:scale-105 cursor-pointer"
     title="Cerrar sesión"
     @click="logout"
   >
-    <IconsLogout />
+    <IconsLogout class="m-0" />
+    <span class="text-sm">Salir</span>
   </button>
 </template>

@@ -74,14 +74,20 @@ const handleDeleteComerce = async (comercio: Comercio) => {
       <div>
         <h3 class="text-xl font-semibold text-gray-900 mb-2">
           {{ comercio.name }}
-          <span v-if="comercio.distance" class="text-sm text-gray-600"
-            >{{ Math.round(comercio.distance * 100) }} mt</span
+          <span v-if="comercio.distance" class="text-sm text-gray-600 ml-2"
+            >a {{ Math.round(comercio.distance * 100) }} mt</span
           >
         </h3>
 
-        <div class="flex items-start text-gray-600 mb-3">
-          <IconsMapPin class="w-4 h-4 mt-1 mr-2 flex-shrink-0" />
-          <span class="text-sm">{{ comercio.ubicacion }}</span>
+        <div class="">
+          <a
+            class="flex items-center gap-1 text-orange-600 mb-3"
+            target="_blank"
+            :href="`https://maps.google.com/?q=${comercio.location.lat},${comercio.location.lng}`"
+          >
+            <IconsMapPin class="w-6 sh-6 mt-1 mr-2 flex-shrink-0" />
+            <span class="text-sm">{{ comercio.ubicacion }}</span>
+          </a>
         </div>
 
         <p
