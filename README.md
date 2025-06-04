@@ -54,4 +54,4 @@ la7media/
 
 ## 📜 Licencia
 
-Este proyecto está bajo la Licencia MIT.
+La licencia aun no la hemos definido pero pronto lo haremos.
