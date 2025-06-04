@@ -1,75 +1,57 @@
-# Nuxt Minimal Starter
+# La7Media
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+**La7Media** es una plataforma digital pensada para fortalecer los lazos entre barrios, comercios locales y procesos culturales. A través de un directorio geolocalizado, los usuarios pueden descubrir tiendas cercanas y participar en una red colaborativa de creación de contenidos, como podcasts y eventos barriales.
 
-## Setup
+## 🛠 Tecnologías
 
-Make sure to install dependencies:
+- [Nuxt.js](https://nuxt.com/)
+- JavaScript
+- HTML / CSS
+- Geolocation API (Navegador)
+
+## 🚀 Funcionalidades
+
+- 📍 **Geolocalización:** Encuentra los comercios más cercanos a tu ubicación actual.
+- 🛒 **Directorio de Comercios:** Navega por categorías, horarios y servicios ofrecidos por negocios locales.
+- 🎙️ **Integración Cultural:** Espacios para difusión de podcasts comunitarios y contenido artístico.
+- 🔍 **Búsqueda Inteligente:** Filtros por nombre, tipo de comercio y ubicación.
+
+## 📦 Instalación
+
+Clona el repositorio y ejecuta localmente:
 
 ```bash
-# npm
+git clone https://github.com/tu-usuario/la7media.git
+cd la7media
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+## 🌐 Uso
 
-Build the application for production:
+Una vez iniciada la app localmente, accede desde `http://localhost:3000`. Asegúrate de permitir el uso de la ubicación en tu navegador para habilitar la geolocalización.
 
-```bash
-# npm
-npm run build
+## ✨ Objetivo del Proyecto
 
-# pnpm
-pnpm build
+> Transformar la manera en que los barrios se comunican, se organizan y se narran a sí mismos, conectando lo cotidiano con lo digital y lo artístico.
 
-# yarn
-yarn build
+## 📁 Estructura del Proyecto
 
-# bun
-bun run build
+```
+la7media/
+├── components/
+├── pages/
+├── public/
+├── assets/
+├── composables/
+├── nuxt.config.ts
+└── ...
 ```
 
-Locally preview production build:
+## 🙌 Contribuciones
 
-```bash
-# npm
-npm run preview
+¿Quieres aportar al proyecto? ¡Bienvenido! Puedes abrir issues, sugerir mejoras o enviar pull requests.
 
-# pnpm
-pnpm preview
+## 📜 Licencia
 
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Este proyecto está bajo la Licencia MIT.
