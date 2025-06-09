@@ -24,23 +24,17 @@ const createComerce = () => {
     <!-- Header con título y filtros -->
     <div class="px-0 py-4 sm:px-4 mb-2">
       <div class="flex flex-row justify-between items-center gap-4">
-        <div>
-          <h1 class="text-lg md:text-3xl font-bold text-gray-900 mb-1">
-            Directorio
-            <span
-              class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"
-            >
-              Comercial
-            </span>
-          </h1>
-          <p class="text-gray-600 mt-1 text-xs sm:text-sm md:text-base">
-            Descubre los comercios de la comunidad.
-          </p>
-        </div>
+        <AppTitle align="left">
+          Directorio
+          <template #emphasis>comercial</template>
+          <template #description
+            >Descubre los comercios de la comunidad</template
+          >
+        </AppTitle>
 
         <!-- Filtros -->
         <div class="flex items-center gap-2">
-          <DirectoryLiked v-if="auth.user" />
+          <DirectoryLiked v-if="auth.user.value" />
           <DirectoryLocation />
           <DirectoryCategoria />
         </div>

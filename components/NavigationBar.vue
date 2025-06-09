@@ -19,6 +19,10 @@
         <IconsBlocks />
         <span>Directorio</span>
       </NavigationBarLink>
+      <NavigationBarLink to="planes">
+        <IconsMoney />
+        <span>Planes</span>
+      </NavigationBarLink>
     </div>
     <div>
       <AuthCard />
