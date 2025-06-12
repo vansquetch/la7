@@ -4,7 +4,8 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
 const isLoading = ref(false);
-const token = ref("");
+const isDev = process.env.NODE_ENV === "development";
+const token = ref(isDev ? "development-token" : "");
 const { login, errorMessage, loginParams } = useAuth();
 
 const loginManage = async () => {
@@ -12,6 +13,14 @@ const loginManage = async () => {
 
   isLoading.value = true;
   errorMessage.value = "";
+
+  // En desarrollo, simula que siempre hay token
+  const currentToken = isDev ? "development-token" : token.value;
+
+  if (!currentToken) {
+    errorMessage.value = "No se validó el captcha.";
+    return;
+  }
 
   try {
     const res = await login(token.value);

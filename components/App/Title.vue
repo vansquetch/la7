@@ -13,12 +13,12 @@ const sizes: Record<Size, string> = {
   extraBig: "text-16xl",
 };
 
-const res = sizes[size] ?? sizes.normal;
+const sizefin = sizes[size] ?? sizes.normal;
 </script>
 
 <template>
   <div :class="[`text-${align}`, 'mb-8', $attrs.class]">
-    <h1 :class="[res, 'font-bold text-gray-900 mb-2']">
+    <h1 :class="[sizefin, 'font-bold text-gray-900 mb-2']">
       <slot />
       <span
         class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600"

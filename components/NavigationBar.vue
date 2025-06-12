@@ -25,7 +25,12 @@
       </NavigationBarLink>
     </div>
     <div>
-      <AuthCard />
+      <client-only>
+        <AuthCard />
+        <template #fallback>
+          <div class="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+        </template>
+      </client-only>
     </div>
   </nav>
 </template>
